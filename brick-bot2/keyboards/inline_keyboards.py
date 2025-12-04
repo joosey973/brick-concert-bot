@@ -47,8 +47,8 @@ async def get_concerts_keyboard(concerts):
     for concert in concerts:
         buttons.append([
             InlineKeyboardButton(
-                text=f'''{concert['name']} ({concert['date'].strftime('%d.%m.%Y')})''',
-                callback_data=f'''concert_{concert['id']}'''
+                text=f"{concert['name']} ({concert['date'].strftime('%d.%m.%Y')})",
+                callback_data=f"concert_{concert['id']}"
             )
         ])
     
@@ -60,8 +60,8 @@ async def get_available_concerts_keyboard(tickets):
     for ticket in tickets:
         buttons.append([
             InlineKeyboardButton(
-                text=f'''{ticket['concert_name']} ({ticket['concert_date'].strftime('%d.%m.%Y')})''',
-                callback_data=f'''ticket_concert_{ticket['concert_id']}''',
+                text=f"{ticket['concert_name']} ({ticket['concert_date'].strftime('%d.%m.%Y')})",
+                callback_data=f"ticket_concert_{ticket['concert_id']}",
             )
         ])
     
@@ -74,8 +74,8 @@ async def get_admin_concerts_keyboard(concerts):
         status = '🟢' if concert.get('is_active', True) else '🔴'
         buttons.append([
             InlineKeyboardButton(
-                text=f'''{status} {concert['name']} ({concert['date'].strftime('%d.%m.%Y')})''',
-                callback_data=f'admin_concert_{concert['id']}'
+                text=f"{status} {concert['name']} ({concert['date'].strftime('%d.%m.%Y')})",
+                callback_data=f'admin_concert_{concert["id"]}'
             )
         ])
     
@@ -85,11 +85,11 @@ async def get_concert_management_keyboard(status, concert_id):
     act_inact_text = '🟢 Активировать' if not status else '🔴 Деактивировать'
     return InlineKeyboardMarkup(inline_keyboard=[
         [
-            InlineKeyboardButton(text='✏️ Редактировать', callback_data=f'''edit_concert_{concert_id}'''),
+            InlineKeyboardButton(text='✏️ Редактировать', callback_data=f'edit_concert_{concert_id}'),
             InlineKeyboardButton(text='📢 Рассылка', callback_data=f'broadcast_concert_{concert_id}')
         ],
         [
-            InlineKeyboardButton(text=act_inact_text, callback_data=f'''deactivate_concert_{concert_id}'''),
+            InlineKeyboardButton(text=act_inact_text, callback_data=f'deactivate_concert_{concert_id}'),
             InlineKeyboardButton(text='📋 Список концертов', callback_data='list_concerts')
         ]
     ])

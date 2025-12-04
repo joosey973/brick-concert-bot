@@ -162,13 +162,13 @@ async def show_voting_menu(message: types.Message):
         else:
             already_voted_count += 1
     
-    report = f'''
+    report = f"""
                 📊 Отчет о рассылке:
 👥 Всего подписчиков: {total_users}
 ✅ Уже проголосовали: {already_voted_count}
 📢 Получили голосование: {sent_count}
 ❌ Не отправилось: {total_users - sent_count - already_voted_count}
-    '''
+    """
     await message.answer(report)
 
 
@@ -278,7 +278,7 @@ async def process_address_creation(message: types.Message, state: FSMContext):
         f'1. Отправляйте фото по одному\n'
         f'2. Максимум 10 фото\n'
         f'3. Используйте кнопки ниже для управления\n\n'
-        f'⚠️ После нажатия \'Сохранить фото\' фото будут добавлены к концерту.',
+        f'⚠️ После нажатия "Сохранить фото" фото будут добавлены к концерту.',
         reply_markup=keyboard,
         parse_mode='HTML'
     )
@@ -318,7 +318,7 @@ async def process_photos(message: types.Message, state: FSMContext):
             '🗑️ Список фото очищен!\n\n'
             f'🖼️ Добавлено новых фото: <b>0</b>\n'
             f'Осталось мест: <b>10</b>\n\n'
-            'Продолжайте отправлять фото или нажмите \'Сохранить фото\' для завершения.',
+            'Продолжайте отправлять фото или нажмите "Сохранить фото" для завершения.',
             reply_markup=keyboard,
             parse_mode='HTML'
         )
@@ -332,8 +332,8 @@ async def process_photos(message: types.Message, state: FSMContext):
         if missing_fields:
             keyboard = await rep_key.get_admin_keyboard()
             await message.answer(
-                f'❌ Ошибка: отсутствуют обязательные поля: {', '.join(missing_fields)}\n'
-                f'Пожалуйста, начните создание заново.',
+                f'''❌ Ошибка: отсутствуют обязательные поля: {", ".join(missing_fields)}\n'''
+                f'''Пожалуйста, начните создание заново.''',
                 reply_markup=keyboard,
             )
             await state.clear()
@@ -355,7 +355,7 @@ async def process_photos(message: types.Message, state: FSMContext):
         text += f'📄 Описание: {concert.description}\n'
         text += f'📅 Дата: {concert.date}\n'
         text += f'📍 Адрес: {address}\n'
-        text += f'🖼️ Фото: {len(data.get('photos', []))} шт.\n'
+        text += f'🖼️ Фото: {len(data.get("photos", []))} шт.\n'
         text += f'📊 Статус: {status}\n'
         
         admin_keyboard = await rep_key.get_admin_keyboard()
@@ -385,7 +385,7 @@ async def process_photos(message: types.Message, state: FSMContext):
         await message.answer(
             f'📸 Добавлено новых фото: <b>{len(photos)}</b>\n'
             f'Осталось мест: <b>{10 - len(photos)}</b>\n\n'
-            f'Продолжайте отправлять фото или нажмите \'Сохранить фото\' для завершения.',
+            f'Продолжайте отправлять фото или нажмите "Сохранить фото" для завершения.',
             reply_markup=keyboard,
             parse_mode='HTML',
         )
@@ -450,7 +450,7 @@ async def get_group_clicked(callback: types.CallbackQuery):
     if success:
         await callback.message.delete()
         await callback.message.answer(
-            '🙏 Спасибо за то, что проголосовали!',
+            '🙏 Благодарим за ваш голос!\n💃 Ожидайте розыгрышка! 🕺',
         )
     else:
         await callback.answer(message, show_alert=True)
@@ -493,7 +493,7 @@ async def show_voting_results(message: types.Message):
             winner = group
     
     if winner and max_votes > 0:
-        text += f'\n\n🏆 Победитель: Группа \'{winner.name}\' -- {max_votes} голосов'
+        text += f'\n\n🏆 Победитель: Группа "{winner.name}" -- {max_votes} голосов'
     else:
         text += '\n\n🏆 Пока нет голосов'
     
@@ -542,10 +542,10 @@ async def select_concert(callback: types.CallbackQuery):
     ticket_data = await database.create_ticket(user.id, concert_id)
 
     await callback.message.edit_text(
-            f'''🎫 Ваш билет сгенерирован!\n\n'''
-            f'''🎟️ Код: <code>{ticket_data['code']}</code>\n'''
-            f'''⚠️ Сохраните этот код! Он понадобится при входе на концерт.\n\n'''
-            f'''🎭 Покажите этот код организатору при входе.''',
+            f'🎫 Ваш билет сгенерирован!\n\n'
+            f'🎟️ Код: <code>{ticket_data["code"]}</code>\n'
+            f'⚠️ Сохраните этот код! Он понадобится при входе на концерт.\n\n'
+            f'🎭 Покажите этот код организатору при входе.',
             parse_mode='HTML'
         )
 
@@ -592,13 +592,13 @@ async def select_ticket_concert(callback: types.CallbackQuery):
     used_time = ''
 
     if ticket.get('used_at'):
-        used_time = f'\n🕒 Использован: {ticket['used_at'].strftime('%d.%m.%Y %H:%M')}'
+        used_time = f'\n🕒 Использован: {ticket["used_at"].strftime("%d.%m.%Y %H:%M")}'
     
     txt = (
-        f'''🎵 Концерт: {ticket['concert_name']}\n'''
-        f'''📅 Дата: {ticket['concert_date'].strftime('%d.%m.%Y %H:%M')}\n'''
-        f'''🎟️ Код: <code>{ticket['code']}</code>\n'''
-        f'''📊 Статус билета: {status}{used_time}\n'''
+        f'🎵 Концерт: {ticket["concert_name"]}\n'
+        f'📅 Дата: {ticket["concert_date"].strftime("%d.%m.%Y %H:%M")}\n'
+        f'🎟️ Код: <code>{ticket["code"]}</code>\n'
+        f'📊 Статус билета: {status}{used_time}\n'
     )
 
     if ticket.get('concert_photos'):
@@ -649,13 +649,13 @@ async def select_concert_for_management(callback: types.CallbackQuery, state: FS
     status = '🟢 Активен' if concert['is_active'] else '🔴 Неактивен'
     address = concert.get('address', 'Не указан')
     
-    text = f'''🎵 Управление концертом:\n\n'''
-    text += f'''📝 Название: {concert['name']}\n'''
-    text += f'''📄 Описание: {concert['description']}\n'''
-    text += f'''📅 Дата: {concert['date'].strftime('%d.%m.%Y %H:%M')}\n'''
-    text += f'''📍 Адрес: {address}\n'''
-    text += f'''🖼️ Фото: {len(concert['photos'])} шт.\n'''
-    text += f'''📊 Статус: {status}\n'''
+    text = f'🎵 Управление концертом:\n\n'
+    text += f'📝 Название: {concert["name"]}\n'
+    text += f'📄 Описание: {concert["description"]}\n'
+    text += f'📅 Дата: {concert["date"].strftime("%d.%m.%Y %H:%M")}\n'
+    text += f'📍 Адрес: {address}\n'
+    text += f'🖼️ Фото: {len(concert["photos"])} шт.\n'
+    text += f'📊 Статус: {status}\n'
     
     keyboard = await inl_key.get_concert_management_keyboard(concert['is_active'], concert_id)
     await callback.message.edit_text(text, reply_markup=keyboard)
@@ -680,11 +680,11 @@ async def deactivate_concert(callback: types.CallbackQuery):
     address = concert.get('address', 'Не указан')
     
     text = f'🎵 Управление концертом:\n\n'
-    text += f'📝 Название: {concert['name']}\n'
-    text += f'📄 Описание: {concert['description']}\n'
-    text += f'📅 Дата: {concert['date'].strftime('%d.%m.%Y %H:%M')}\n'
+    text += f'📝 Название: {concert["name"]}\n'
+    text += f'📄 Описание: {concert["description"]}\n'
+    text += f'📅 Дата: {concert["date"].strftime("%d.%m.%Y %H:%M")}\n'
     text += f'📍 Адрес: {address}\n'
-    text += f'🖼️ Фото: {len(concert['photos'])} шт.\n'
+    text += f'🖼️ Фото: {len(concert["photos"])} шт.\n'
     text += f'📊 Статус: {status}\n'
     
     keyboard = await inl_key.get_concert_management_keyboard(concert['is_active'], concert_id)
@@ -736,11 +736,11 @@ async def back_to_management(callback: types.CallbackQuery, state: FSMContext):
     address = concert.get('address', 'Не указан')
     
     text = f'🎵 Управление концертом:\n\n'
-    text += f'📝 Название: {concert['name']}\n'
-    text += f'📄 Описание: {concert['description']}\n'
-    text += f'📅 Дата: {concert['date'].strftime('%d.%m.%Y %H:%M')}\n'
+    text += f'📝 Название: {concert["name"]}\n'
+    text += f'📄 Описание: {concert["description"]}\n'
+    text += f'📅 Дата: {concert["date"].strftime("%d.%m.%Y %H:%M")}\n'
     text += f'📍 Адрес: {address}\n'
-    text += f'🖼️ Фото: {len(concert['photos'])} шт.\n'
+    text += f'🖼️ Фото: {len(concert["photos"])} шт.\n'
     text += f'📊 Статус: {status}\n'
     
     keyboard = await inl_key.get_concert_management_keyboard(status, concert_id)
@@ -895,7 +895,7 @@ async def edit_photos_start(callback: types.CallbackQuery, state: FSMContext):
         f'1. Отправляйте фото по одному\n'
         f'2. Максимум 10 фото\n'
         f'3. Используйте кнопки ниже для управления\n\n'
-        f'⚠️ После нажатия \'Сохранить\' все старые фото будут заменены.',
+        f'⚠️ После нажатия "Сохранить" все старые фото будут заменены.',
         parse_mode='HTML',
         reply_markup=keyboard
     )
@@ -921,11 +921,11 @@ async def edit_photos_start(callback: types.CallbackQuery, state: FSMContext):
     address = concert.get('address', 'Не указан')
     
     text = f'🎵 Управление концертом:\n\n'
-    text += f'📝 Название: {concert['name']}\n'
-    text += f'📄 Описание: {concert['description']}\n'
-    text += f'📅 Дата: {concert['date'].strftime('%d.%m.%Y %H:%M')}\n'
+    text += f'📝 Название: {concert["name"]}\n'
+    text += f'📄 Описание: {concert["description"]}\n'
+    text += f'📅 Дата: {concert["date"].strftime("%d.%m.%Y %H:%M")}\n'
     text += f'📍 Адрес: {address}\n'
-    text += f'🖼️ Фото: {len(concert['photos'])} шт.\n'
+    text += f'🖼️ Фото: {len(concert["photos"])} шт.\n'
     text += f'📊 Статус: {status}\n'
     
     keyboard = await inl_key.get_concert_management_keyboard(status, concert_id)
@@ -981,15 +981,15 @@ async def clear_photos(callback: types.CallbackQuery, state: FSMContext):
     photo_count = len(concert.get('photos', []))
     keyboard = await inl_key.get_photos_edit_keyboard(concert_id)
     await callback.message.edit_text(
-        f'''🖼️ <b>Редактирование фото концерта</b>\n\n'''
-        f'''Текущее количество фото: <b>{photo_count}</b>\n'''
-        f'''Концерт ID: {concert_id}\n'''
-        f'''Добавлено новых фото: <b>0</b>\n\n'''
-        f'''<b>Инструкция:</b>\n'''
-        f'''1. Отправляйте фото по одному\n'''
-        f'''2. Максимум 10 фото\n'''
-        f'''3. Используйте кнопки ниже для управления\n\n'''
-        f'''⚠️ После нажатия 'Сохранить' все старые фото будут заменены.''',
+        f'🖼️ <b>Редактирование фото концерта</b>\n\n'
+        f'Текущее количество фото: <b>{photo_count}</b>\n'
+        f'Концерт ID: {concert_id}\n'
+        f'Добавлено новых фото: <b>0</b>\n\n'
+        f'<b>Инструкция:</b>\n'
+        f'1. Отправляйте фото по одному\n'
+        f'2. Максимум 10 фото\n'
+        f'3. Используйте кнопки ниже для управления\n\n'
+        f'⚠️ После нажатия "Сохранить" все старые фото будут заменены.',
         parse_mode='HTML',
         reply_markup=keyboard
     )
@@ -1180,7 +1180,7 @@ async def process_new_photos(message: types.Message, state: FSMContext):
         f'Текущее количество фото: <b>{original_photo_count}</b>\n'
         f'Добавлено новых фото: <b>{len(current_photos)}</b>\n'
         f'Осталось мест: <b>{10 - len(current_photos)}</b>\n\n'
-        f'Продолжайте отправлять фото или нажмите \'Сохранить фото\' для завершения.',
+        f'Продолжайте отправлять фото или нажмите "Сохранить фото" для завершения.',
         parse_mode='HTML',
         reply_markup=keyboard
     )
@@ -1281,7 +1281,7 @@ async def search_user(message: types.Message, state: FSMContext):
     
     if not found_users:
         await message.answer(
-            f'❌ Пользователь не найден по запросу: \'{search_query}\'\n\n'
+            f'❌ Пользователь не найден по запросу: "{search_query}"\n\n'
             f'Попробуйте:\n'
             f'• Полный username (с @)\n'
             f'• Имя и фамилию\n'
@@ -1299,10 +1299,10 @@ async def search_user(message: types.Message, state: FSMContext):
         keyboard = await rep_key.confirm_cancel_keyboard()
         await message.answer(
             f'✅ Найден пользователь:\n\n'
-            f'👤 Имя: {user.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user.get('username', 'Не указан')}\n'
-            f'🆔 ID: {user['telegram_id']}\n'
-            f'🎭 Текущая роль: {user.get('role', 'user')}\n\n'
+            f'👤 Имя: {user.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user.get("username", "Не указан")}\n'
+            f'🆔 ID: {user["telegram_id"]}\n'
+            f'🎭 Текущая роль: {user.get("role", "user")}\n\n'
             f'Назначить этого пользователя ведущим?',
             reply_markup=keyboard
         )
@@ -1343,10 +1343,10 @@ async def select_user_from_list(callback: types.CallbackQuery, state: FSMContext
     keyboard = await rep_key.confirm_cancel_keyboard()
     await callback.message.edit_text(
         f'✅ Выбран пользователь:\n\n'
-        f'👤 Имя: {selected_user.get('full_name', 'Не указано')}\n'
-        f'📱 Username: @{selected_user.get('username', 'Не указан')}\n'
-        f'🆔 ID: {selected_user['telegram_id']}\n'
-        f'🎭 Текущая роль: {selected_user.get('role', 'user')}\n\n'
+        f'👤 Имя: {selected_user.get("full_name", "Не указано")}\n'
+        f'📱 Username: @{selected_user.get("username", "Не указан")}\n'
+        f'🆔 ID: {selected_user["telegram_id"]}\n'
+        f'🎭 Текущая роль: {selected_user.get("role", "user")}\n\n'
         f'Назначить этого пользователя ведущим?',
         reply_markup=keyboard
     )
@@ -1363,8 +1363,8 @@ async def confirm_appointment(message: types.Message, state: FSMContext):
     await message.answer(
         f'⚠️ <b>Подтверждение назначения</b>\n\n'
         f'Вы собираетесь назначить ведущим:\n\n'
-        f'👤 <b>Пользователь:</b> {user_info.get('full_name', 'Не указано')}\n'
-        f'📱 <b>Username:</b> @{user_info.get('username', 'Не указан')}\n'
+        f'👤 <b>Пользователь:</b> {user_info.get("full_name", "Не указано")}\n'
+        f'📱 <b>Username:</b> @{user_info.get("username", "Не указан")}\n'
         f'🆔 <b>ID:</b> {user_id}\n\n'
         f'После назначения пользователь получит доступ к функциям розыгрыша.\n\n'
         f'<b>Подтвердить назначение?</b>',
@@ -1435,8 +1435,8 @@ async def final_confirm_appointment(message: types.Message, state: FSMContext):
         keyboard = await rep_key.raffle_keyboard()
         await message.answer(
             f'✅ <b>Пользователь назначен ведущим!</b>\n\n'
-            f'👤 Имя: {user_info.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user_info.get('username', 'Не указан')}\n'
+            f'👤 Имя: {user_info.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user_info.get("username", "Не указан")}\n'
             f'🆔 ID: {user_id}\n\n'
             f'Пользователь получил уведомление о назначении.',
             parse_mode='HTML',
@@ -1535,7 +1535,7 @@ async def search_user_checker(message: types.Message, state: FSMContext):
     
     if not found_users:
         await message.answer(
-            f'❌ Пользователь не найден по запросу: \'{search_query}\'\n\n'
+            f'❌ Пользователь не найден по запросу: "{search_query}"\n\n'
             f'Попробуйте:\n'
             f'• Полный username (с @)\n'
             f'• Имя и фамилию\n'
@@ -1553,10 +1553,10 @@ async def search_user_checker(message: types.Message, state: FSMContext):
         keyboard = await rep_key.confirm_cancel_keyboard()
         await message.answer(
             f'✅ Найден пользователь:\n\n'
-            f'👤 Имя: {user.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user.get('username', 'Не указан')}\n'
-            f'🆔 ID: {user['telegram_id']}\n'
-            f'🎭 Текущая роль: {user.get('role', 'user')}\n\n'
+            f'👤 Имя: {user.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user.get("username", "Не указан")}\n'
+            f'🆔 ID: {user["telegram_id"]}\n'
+            f'🎭 Текущая роль: {user.get("role", "user")}\n\n'
             f'Назначить этого пользователя проверяющим?',
             reply_markup=keyboard
         )
@@ -1582,8 +1582,8 @@ async def confirm_checker_appointment(message: types.Message, state: FSMContext)
     await message.answer(
         f'⚠️ <b>Подтверждение назначения</b>\n\n'
         f'Вы собираетесь назначить проверяющим:\n\n'
-        f'👤 <b>Пользователь:</b> {user_info.get('full_name', 'Не указано')}\n'
-        f'📱 <b>Username:</b> @{user_info.get('username', 'Не указан')}\n'
+        f'👤 <b>Пользователь:</b> {user_info.get("full_name", "Не указано")}\n'
+        f'📱 <b>Username:</b> @{user_info.get("username", "Не указан")}\n'
         f'🆔 <b>ID:</b> {user_id}\n\n'
         f'После назначения пользователь получит доступ к функциям проверки билетов.\n\n'
         f'<b>Подтвердить назначение?</b>',
@@ -1641,7 +1641,7 @@ async def final_confirm_checker_appointment(message: types.Message, state: FSMCo
                 text='🎉 <b>Вас назначили проверяющим!</b>\n\n'
                      'Теперь у вас есть доступ к функциям проверки билетов:\n'
                      '• Проверка билетов на входе\n\n'
-                     'Используйте кнопку \'🎫 Проверить билет\' в меню.',
+                     'Используйте кнопку "🎫 Проверить билет" в меню.',
                 parse_mode='HTML'
             )
         except Exception as e:
@@ -1651,8 +1651,8 @@ async def final_confirm_checker_appointment(message: types.Message, state: FSMCo
         keyboard = await rep_key.manage_roles_keyboard()
         await message.answer(
             f'✅ <b>Пользователь назначен проверяющим!</b>\n\n'
-            f'👤 Имя: {user_info.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user_info.get('username', 'Не указан')}\n'
+            f'👤 Имя: {user_info.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user_info.get("username", "Не указан")}\n'
             f'🆔 ID: {user_id}\n\n'
             f'Пользователь получил уведомление о назначении.',
             parse_mode='HTML',
@@ -1722,7 +1722,7 @@ async def search_user_remove_leading(message: types.Message, state: FSMContext):
     
     if not found_users:
         await message.answer(
-            f'❌ Пользователь не найден по запросу: \'{search_query}\'\n\n'
+            f'❌ Пользователь не найден по запросу: "{search_query}"\n\n'
             f'Попробуйте:\n'
             f'• Полный username (с @)\n'
             f'• Имя и фамилию\n'
@@ -1742,10 +1742,10 @@ async def search_user_remove_leading(message: types.Message, state: FSMContext):
         keyboard = await rep_key.confirm_cancel_keyboard()
         await message.answer(
             f'⚠️ <b>Снятие роли ведущего</b>\n\n'
-            f'👤 Пользователь: {user.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user.get('username', 'Не указан')}\n'
-            f'🆔 ID: {user['telegram_id']}\n'
-            f'🎭 Текущая роль: {user.get('role', 'user')}\n\n'
+            f'👤 Пользователь: {user.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user.get("username", "Не указан")}\n'
+            f'🆔 ID: {user["telegram_id"]}\n'
+            f'🎭 Текущая роль: {user.get("role", "user")}\n\n'
             f'Снять роль ведущего у этого пользователя?',
             parse_mode='HTML',
             reply_markup=keyboard
@@ -1776,8 +1776,8 @@ async def confirm_leading_removal(message: types.Message, state: FSMContext):
     await message.answer(
         f'⚠️ <b>Подтверждение снятия роли</b>\n\n'
         f'Вы собираетесь снять роль ведущего у:\n\n'
-        f'👤 <b>Пользователь:</b> {user_info.get('full_name', 'Не указано')}\n'
-        f'📱 <b>Username:</b> @{user_info.get('username', 'Не указан')}\n'
+        f'👤 <b>Пользователь:</b> {user_info.get("full_name", "Не указано")}\n'
+        f'📱 <b>Username:</b> @{user_info.get("username", "Не указан")}\n'
         f'🆔 <b>ID:</b> {user_id}\n\n'
         f'После этого пользователь потеряет доступ к функциям розыгрыша.\n\n'
         f'<b>Подтвердить снятие роли?</b>',
@@ -1846,8 +1846,8 @@ async def final_confirm_leading_removal(message: types.Message, state: FSMContex
         keyboard = await rep_key.manage_roles_keyboard()
         await message.answer(
             f'✅ <b>Роль ведущего снята!</b>\n\n'
-            f'👤 Имя: {user_info.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user_info.get('username', 'Не указан')}\n'
+            f'👤 Имя: {user_info.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user_info.get("username", "Не указан")}\n'
             f'🆔 ID: {user_id}\n\n'
             f'Пользователь получил уведомление.',
             parse_mode='HTML',
@@ -1910,7 +1910,7 @@ async def search_user_remove_checker(message: types.Message, state: FSMContext):
     
     if not found_users:
         await message.answer(
-            f'❌ Пользователь не найден по запросу: \'{search_query}\'\n\n'
+            f'❌ Пользователь не найден по запросу: "{search_query}"\n\n'
             f'Попробуйте:\n'
             f'• Полный username (с @)\n'
             f'• Имя и фамилию\n'
@@ -1930,10 +1930,10 @@ async def search_user_remove_checker(message: types.Message, state: FSMContext):
         keyboard = await rep_key.confirm_cancel_keyboard()
         await message.answer(
             f'⚠️ <b>Снятие роли проверяющего</b>\n\n'
-            f'👤 Пользователь: {user.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user.get('username', 'Не указан')}\n'
-            f'🆔 ID: {user['telegram_id']}\n'
-            f'🎭 Текущая роль: {user.get('role', 'user')}\n\n'
+            f'👤 Пользователь: {user.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user.get("username", "Не указан")}\n'
+            f'🆔 ID: {user["telegram_id"]}\n'
+            f'🎭 Текущая роль: {user.get("role", "user")}\n\n'
             f'Снять роль проверяющего у этого пользователя?',
             parse_mode='HTML',
             reply_markup=keyboard
@@ -1964,8 +1964,8 @@ async def confirm_checker_removal(message: types.Message, state: FSMContext):
     await message.answer(
         f'⚠️ <b>Подтверждение снятия роли</b>\n\n'
         f'Вы собираетесь снять роль проверяющего у:\n\n'
-        f'👤 <b>Пользователь:</b> {user_info.get('full_name', 'Не указано')}\n'
-        f'📱 <b>Username:</b> @{user_info.get('username', 'Не указан')}\n'
+        f'👤 <b>Пользователь:</b> {user_info.get("full_name", "Не указано")}\n'
+        f'📱 <b>Username:</b> @{user_info.get("username", "Не указан")}\n'
         f'🆔 <b>ID:</b> {user_id}\n\n'
         f'После этого пользователь потеряет доступ к функциям проверки билетов.\n\n'
         f'<b>Подтвердить снятие роли?</b>',
@@ -2031,8 +2031,8 @@ async def final_confirm_checker_removal(message: types.Message, state: FSMContex
         keyboard = await rep_key.manage_roles_keyboard()
         await message.answer(
             f'✅ <b>Роль проверяющего снята!</b>\n\n'
-            f'👤 Имя: {user_info.get('full_name', 'Не указано')}\n'
-            f'📱 Username: @{user_info.get('username', 'Не указан')}\n'
+            f'👤 Имя: {user_info.get("full_name", "Не указано")}\n'
+            f'📱 Username: @{user_info.get("username", "Не указан")}\n'
             f'🆔 ID: {user_id}\n\n'
             f'Пользователь получил уведомление.',
             parse_mode='HTML',
@@ -2065,16 +2065,16 @@ async def show_leading_users(message: types.Message):
     leading_users = await database.get_users_by_role('leading')
     
     if not leading_users:
-        await message.answer('📭 Нет пользователей с ролью \'ведущий\'.')
+        await message.answer('📭 Нет пользователей с ролью "ведущий".')
         return
     
     text = '👑 <b>Список ведущих:</b>\n\n'
     for i, user in enumerate(leading_users, 1):
-        text += f'{i}. <b>{user['full_name']}</b>\n'
+        text += f'{i}. <b>{user["full_name"]}</b>\n'
         if user['username']:
-            text += f'   @{user['username']}\n'
-        text += f'   🆔 ID: {user['telegram_id']}\n'
-        text += f'   📅 Создан: {user['created_at'].strftime('%d.%m.%Y')}\n\n'
+            text += f'   @{user["username"]}\n'
+        text += f'   🆔 ID: {user["telegram_id"]}\n'
+        text += f'   📅 Создан: {user["created_at"].strftime("%d.%m.%Y")}\n\n'
     
     await message.answer(text, parse_mode='HTML')
 
@@ -2084,16 +2084,16 @@ async def show_checker_users(message: types.Message):
     checker_users = await database.get_users_by_role('checker')
     
     if not checker_users:
-        await message.answer('📭 Нет пользователей с ролью \'проверяющий\'.')
+        await message.answer('📭 Нет пользователей с ролью "проверяющий".')
         return
     
     text = '🎫 <b>Список проверяющих:</b>\n\n'
     for i, user in enumerate(checker_users, 1):
-        text += f'{i}. <b>{user['full_name']}</b>\n'
+        text += f'{i}. <b>{user["full_name"]}</b>\n'
         if user['username']:
-            text += f'   @{user['username']}\n'
-        text += f'   🆔 ID: {user['telegram_id']}\n'
-        text += f'   📅 Создан: {user['created_at'].strftime('%d.%m.%Y')}\n\n'
+            text += f'   @{user["username"]}\n'
+        text += f'   🆔 ID: {user["telegram_id"]}\n'
+        text += f'   📅 Создан: {user["created_at"].strftime("%d.%m.%Y")}\n\n'
     
     await message.answer(text, parse_mode='HTML')
 
@@ -2103,16 +2103,16 @@ async def show_regular_users(message: types.Message):
     regular_users = await database.get_users_by_role('user')
     
     if not regular_users:
-        await message.answer('📭 Нет пользователей с ролью \'обычный пользователь\'.')
+        await message.answer('📭 Нет пользователей с ролью "обычный пользователь".')
         return
     
     text = '👥 <b>Список обычных пользователей:</b>\n\n'
     for i, user in enumerate(regular_users[:20], 1):
-        text += f'{i}. <b>{user['full_name']}</b>\n'
+        text += f'{i}. <b>{user["full_name"]}</b>\n'
         if user['username']:
-            text += f'   @{user['username']}\n'
-        text += f'   🆔 ID: {user['telegram_id']}\n'
-        text += f'   📅 Создан: {user['created_at'].strftime('%d.%m.%Y')}\n\n'
+            text += f'   @{user["username"]}\n'
+        text += f'   🆔 ID: {user["telegram_id"]}\n'
+        text += f'   📅 Создан: {user["created_at"].strftime("%d.%m.%Y")}\n\n'
     
     if len(regular_users) > 20:
         text += f'\n📊 И еще {len(regular_users) - 20} пользователей...'
@@ -2125,16 +2125,16 @@ async def show_admin_users(message: types.Message):
     admin_users = await database.get_users_by_role('admin')
     
     if not admin_users:
-        await message.answer('📭 Нет пользователей с ролью \'администратор\'.')
+        await message.answer('📭 Нет пользователей с ролью "администратор".')
         return
     
     text = '👨‍💻 <b>Список администраторов:</b>\n\n'
     for i, user in enumerate(admin_users, 1):
-        text += f'{i}. <b>{user['full_name']}</b>\n'
+        text += f'{i}. <b>{user["full_name"]}</b>\n'
         if user['username']:
-            text += f'   @{user['username']}\n'
-        text += f'   🆔 ID: {user['telegram_id']}\n'
-        text += f'   📅 Создан: {user['created_at'].strftime('%d.%m.%Y')}\n\n'
+            text += f'   @{user["username"]}\n'
+        text += f'   🆔 ID: {user["telegram_id"]}\n'
+        text += f'   📅 Создан: {user["created_at"].strftime("%d.%m.%Y")}\n\n'
     
     await message.answer(text, parse_mode='HTML')
 
@@ -2233,16 +2233,16 @@ async def process_ticket_code(message: types.Message, state: FSMContext):
     used_time = ''
     
     if ticket_info.get('used_at'):
-        used_time = f'\n🕒 Использован: {ticket_info['used_at'].strftime('%d.%m.%Y %H:%M')}'
+        used_time = f'\n🕒 Использован: {ticket_info["used_at"].strftime("%d.%m.%Y %H:%M")}'
     
-    text = f'''🎫 <b>Информация о билете</b>\n\n'''
-    text += f'''🎵 Концерт: {ticket_info['concert_name']}\n'''
-    text += f'''📅 Дата: {ticket_info['concert_date'].strftime('%d.%m.%Y %H:%M')}\n'''
-    text += f'''👤 Владелец: {ticket_info['user_name']}\n'''
+    text = f'🎫 <b>Информация о билете</b>\n\n'
+    text += f'🎵 Концерт: {ticket_info["concert_name"]}\n'
+    text += f'📅 Дата: {ticket_info["concert_date"].strftime("%d.%m.%Y %H:%M")}\n'
+    text += f'👤 Владелец: {ticket_info["user_name"]}\n'
     if ticket_info['user_username']:
-        text += f'''📱 Username: @{ticket_info['user_username']}\n'''
-    text += f'''🎟️ Код: <code>{ticket_info['code']}</code>\n'''
-    text += f'''📊 Статус: {status}{used_time}\n'''
+        text += f'📱 Username: @{ticket_info["user_username"]}\n'
+    text += f'🎟️ Код: <code>{ticket_info["code"]}</code>\n'
+    text += f'📊 Статус: {status}{used_time}\n'
     
     if not ticket_info['is_used']:
         keyboard = await rep_key.confirm_use_ticket_keyboard(ticket_info['id'])
@@ -2313,22 +2313,22 @@ async def concerts_statistics(message: types.Message):
     stats = await database.get_concerts_statistics()
     
     text = '🎵 <b>Статистика по концертам</b>\n\n'
-    text += f'📊 Всего концертов: {stats['total_concerts']}\n'
-    text += f'🟢 Активных: {stats['active_concerts']}\n'
-    text += f'🔴 Неактивных: {stats['inactive_concerts']}\n'
-    text += f'🎫 Всего билетов продано: {stats['total_tickets']}\n'
-    text += f'✅ Использовано билетов: {stats['used_tickets']}\n'
-    text += f'🟢 Активных билетов: {stats['active_tickets']}\n\n'
+    text += f"📊 Всего концертов: {stats['total_concerts']}\n"
+    text += f"🟢 Активных: {stats['active_concerts']}\n"
+    text += f"🔴 Неактивных: {stats['inactive_concerts']}\n"
+    text += f"🎫 Всего билетов продано: {stats['total_tickets']}\n"
+    text += f"✅ Использовано билетов: {stats['used_tickets']}\n"
+    text += f"🟢 Активных билетов: {stats['active_tickets']}\n\n"
     
     if stats['popular_concert']:
-        text += f'🏆 <b>Самый популярный концерт:</b>\n'
-        text += f'{stats['popular_concert']['name']}\n'
-        text += f'🎫 Билетов продано: {stats['popular_concert']['tickets_count']}\n\n'
+        text += f"🏆 <b>Самый популярный концерт:</b>\n"
+        text += f"{stats['popular_concert']['name']}\n"
+        text += f"🎫 Билетов продано: {stats['popular_concert']['tickets_count']}\n\n"
     
     text += '<b>Концерты по статусу:</b>\n'
     for concert in stats['concerts_by_status']:
         status = '🟢 Активен' if concert['is_active'] else '🔴 Неактивен'
-        text += f'{status} {concert['name']} - {concert['tickets_count']} билетов\n'
+        text += f'{status} {concert["name"]} - {concert["tickets_count"]} билетов\n'
     
     await message.answer(text, parse_mode='HTML')
 
@@ -2352,11 +2352,11 @@ async def users_statistics(message: types.Message):
     stats = await database.get_users_statistics()
     
     text = '👥 <b>Статистика по пользователям</b>\n\n'
-    text += f'📊 Всего пользователей: {stats['total_users']}\n'
-    text += f'👑 Ведущих: {stats['leading_count']}\n'
-    text += f'🎫 Проверяющих: {stats['checker_count']}\n'
-    text += f'👨‍💻 Администраторов: {stats['admin_count']}\n'
-    text += f'👥 Обычных пользователей: {stats['user_count']}\n\n'
+    text += f'📊 Всего пользователей: {stats["total_users"]}\n'
+    text += f'👑 Ведущих: {stats["leading_count"]}\n'
+    text += f'🎫 Проверяющих: {stats["checker_count"]}\n'
+    text += f'👨‍💻 Администраторов: {stats["admin_count"]}\n'
+    text += f'👥 Обычных пользователей: {stats["user_count"]}\n\n'
     
     text += '<b>Распределение по ролям:</b>\n'
     for role_stat in stats['roles_distribution']:
@@ -2366,7 +2366,7 @@ async def users_statistics(message: types.Message):
             'checker': '🎫 Проверяющие',
             'admin': '👨‍💻 Администраторы'
         }.get(role_stat['role'], role_stat['role'])
-        text += f'{role_name}: {role_stat['count']} ({role_stat['percentage']:.1f}%)\n'
+        text += f'{role_name}: {role_stat["count"]} ({role_stat["percentage"]:.1f}%)\n'
     
     await message.answer(text, parse_mode='HTML')
 
@@ -2390,16 +2390,16 @@ async def tickets_statistics(message: types.Message):
     stats = await database.get_tickets_statistics()
     
     text = '🎫 <b>Статистика по билетам</b>\n\n'
-    text += f'📊 Всего билетов: {stats['total_tickets']}\n'
-    text += f'✅ Использовано: {stats['used_tickets']} ({stats['used_percentage']:.1f}%)\n'
-    text += f'🟢 Активных: {stats['active_tickets']} ({stats['active_percentage']:.1f}%)\n\n'
+    text += f"📊 Всего билетов: {stats['total_tickets']}\n"
+    text += f"✅ Использовано: {stats['used_tickets']} ({stats['used_percentage']:.1f}%)\n"
+    text += f"🟢 Активных: {stats['active_tickets']} ({stats['active_percentage']:.1f}%)\n\n"
     
     text += '<b>Распределение по концертам:</b>\n'
     for concert_stat in stats['tickets_by_concert']:
-        text += f'🎵 {concert_stat['concert_name']}\n'
-        text += f'   🎫 Всего: {concert_stat['total_tickets']}\n'
-        text += f'   ✅ Использовано: {concert_stat['used_tickets']}\n'
-        text += f'   🟢 Активных: {concert_stat['active_tickets']}\n\n'
+        text += f"🎵 {concert_stat['concert_name']}\n"
+        text += f"   🎫 Всего: {concert_stat['total_tickets']}\n"
+        text += f"   ✅ Использовано: {concert_stat['used_tickets']}\n"
+        text += f"   🟢 Активных: {concert_stat['active_tickets']}\n\n"
     
     await message.answer(text, parse_mode='HTML')
 
