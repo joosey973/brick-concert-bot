@@ -1,0 +1,6 @@
+/brick-bot/
+/__pycache__/
+/venv/
+.venv
+*.db
+.env
