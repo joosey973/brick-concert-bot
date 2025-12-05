@@ -149,7 +149,7 @@ async def show_voting_menu(message: types.Message):
     
     await message.answer('⏳ Начинаю рассылку...')
     await asyncio.sleep(4)
-    session = await database._get_session()
+    session = database._get_session()
     users = session.query(User).filter(User.subscribed == True, User.role.in_(['member', 'user'])).all()
     total_users = len(users)
     sent_count = 0

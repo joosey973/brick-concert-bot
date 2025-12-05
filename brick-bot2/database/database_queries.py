@@ -57,18 +57,18 @@ class Database:
         finally:
             session.close()
 
-    async def _get_session(self):
+    def _get_session(self):
         return self.Session()
     
     def generate_ticket_code(self):
         return ''.join(random.choices(string.ascii_letters + string.digits, k=8))
     
     async def get_all_groups(self):
-        session = await self._get_session()
+        session = self._get_session()
         return session.query(Group).all()
     
     async def vote_for_group(self, user_id: int, group_id: int) -> tuple[bool, str]:
-        session = await self._get_session()
+        session = self._get_session()
         
         try:
             existing_vote = session.query(Vote).filter_by(
@@ -106,7 +106,7 @@ class Database:
             return False, '❌ Произошла ошибка при голосовании!'
 
     async def get_user_votes(self, user_id: int):
-        session = await self._get_session()
+        session = self._get_session()
         votes = session.query(Vote).filter_by(user_id=user_id).all()
         
         result = [vote.group_id for vote in votes]
@@ -114,7 +114,7 @@ class Database:
         return result
 
     async def has_user_voted(self, user_id, group_id=None):
-        session = await self._get_session()
+        session = self._get_session()
         if group_id is not None:
             vote = session.query(Vote).filter_by(user_id=user_id, group_id=group_id).first()
         else:
@@ -128,27 +128,40 @@ class Database:
         await bot.send_message(chat_id=telegram_id, text='👋 Еще раз здравствуйте! Проголусйте пожалуйста за группу, от которой вы пришли)', reply_markup=keyboard)
 
     async def get_or_create_user(self, telegram_id, username, full_name):
-        session = await self._get_session()
-        user = session.query(User).filter(User.telegram_id==telegram_id).first()
-        if not user:
-            user = User(telegram_id=telegram_id,
-                        username=username,
-                        full_name=full_name,
-                        )
-            session.add(user)
-            session.commit()
-            session.refresh(user)
-        else:
-            if telegram_id in config.ADMIN_IDS and user.role != 'admin':
-                user.role = 'admin'
+        session = self.Session()
+        try:
+            user = session.query(User).filter(User.telegram_id==telegram_id).first()
+            
+            if not user:
+                user = User(
+                    telegram_id=telegram_id,
+                    username=username,
+                    full_name=full_name,
+                )
+                
+                if telegram_id in config.ADMIN_IDS:
+                    user.role = 'admin'
+                
+                session.add(user)
                 session.commit()
-                session.refresh(user)
-        
-        session.close()
-        return user
+                
+            else:
+                if telegram_id in config.ADMIN_IDS and user.role != 'admin':
+                    user.role = 'admin'
+                    session.commit()
+            
+            session.refresh(user)
+            return user
+            
+        except Exception as e:
+            print(f"Ошибка в get_or_create_user: {e}")
+            session.rollback()
+            raise
+        finally:
+            session.close()  # Всегда закрываем сессию
     
     async def update_user_subscription(self, telegram_id, subscribed):
-        session = await self._get_session()
+        session = self._get_session()
         user = session.query(User).filter(User.telegram_id == telegram_id)
         if user:
             user = user.first()
@@ -158,7 +171,7 @@ class Database:
         return
     
     async def get_active_concerts(self, user_id=None):
-        session = await self._get_session()
+        session = self._get_session()
         current_time = datetime.datetime.now()
         one_day_ago = current_time - datetime.timedelta(days=1)
 
@@ -192,7 +205,7 @@ class Database:
         return result
 
     async def create_ticket(self, user_id, concert_id):
-        session = await self._get_session()
+        session = self._get_session()
         existing_ticket = session.query(Ticket).filter_by(user_id=user_id, concert_id=concert_id).first()
         if existing_ticket:
             return {
@@ -218,7 +231,7 @@ class Database:
             }
     
     async def get_user_tickets(self, user_id):
-        session = await self._get_session()
+        session = self._get_session()
         tickets = session.query(Ticket).options(
             sqlalchemy.orm.joinedload(Ticket.concert),
         ).filter_by(user_id=user_id)
@@ -239,7 +252,7 @@ class Database:
         return result
     
     async def get_user_ticket(self, user_id, concert_id):
-        session = await self._get_session()
+        session = self._get_session()
         ticket = session.query(Ticket).options(
             sqlalchemy.orm.joinedload(Ticket.concert),
         ).filter_by(user_id=user_id, concert_id=concert_id)
@@ -262,7 +275,7 @@ class Database:
         return result
     
     async def get_all_concerts(self):
-        session = await self._get_session()
+        session = self._get_session()
         concerts = session.query(Concert).order_by(Concert.date.desc()).all()
         result = []
         for concert in concerts:
@@ -280,7 +293,7 @@ class Database:
         return result
     
     async def get_concert_by_id(self, concert_id):
-        session = await self._get_session()
+        session = self._get_session()
         concert = session.query(Concert).filter_by(id=concert_id).first()
         if concert:
             photos = json.loads(concert.photos) if concert.photos else []
@@ -298,7 +311,7 @@ class Database:
         return None
     
     async def toggle_concert_active(self, concert_id):
-        session = await self._get_session()
+        session = self._get_session()
         concert = session.query(Concert).filter_by(id=concert_id).first()
         if concert:
             concert.is_active = not concert.is_active
@@ -310,7 +323,7 @@ class Database:
         return None
     
     async def update_concert_field(self, concert_id, field, new_value):
-        session = await self._get_session()
+        session = self._get_session()
         concert = session.query(Concert).filter_by(id=concert_id).first()
         if not concert:
             return False
@@ -325,7 +338,7 @@ class Database:
         return True
     
     async def update_concert_photos(self, concert_id, photo_ids):
-        session = await self._get_session()
+        session = self._get_session()
         concert = session.query(Concert).filter_by(id=concert_id).first()
         if not concert:
             return False
@@ -349,7 +362,7 @@ class Database:
         return True, '✅ Дата корректна'
 
     async def create_concert(self, name, description, date, address, photos):
-        session = await self._get_session()
+        session = self._get_session()
         photos_json = json.dumps(photos) if photos else '[]'
         concert = Concert(
             name=name,
@@ -365,7 +378,7 @@ class Database:
         return concert
 
     async def get_all_users(self):
-        session = await self._get_session()
+        session = self._get_session()
         try:
             users = session.query(User).all()
             return users
@@ -373,7 +386,7 @@ class Database:
             session.close()
 
     async def get_all_subscribed_users(self):
-        session = await self._get_session()
+        session = self._get_session()
         try:
             users = session.query(User).filter(User.subscribed == True, User.role.in_(['member', 'user'])).all()
             return users
@@ -417,14 +430,14 @@ class Database:
                 
                 await bot.send_media_group(chat_id=user.telegram_id, media=media)
             else:
-                await bot.send_message(chat_id=user_id, text=text)
-            
+                await bot.send_message(chat_id=user.telegram_id, text=text)
+
             success_count += 1
         
         return f'✅ Рассылка завершена. Успешно: {success_count}/{len(users)}'
     
     async def search_users(self, search_query):
-        session = await self._get_session()
+        session = self._get_session()
         try:
             query = session.query(User)
             
@@ -465,7 +478,7 @@ class Database:
             session.close()
 
     async def update_user_role(self, telegram_id, new_role):
-        session = await self._get_session()
+        session = self._get_session()
         try:
             user = session.query(User).filter(User.telegram_id == telegram_id).first()
             
@@ -473,10 +486,12 @@ class Database:
                 print(f'Пользователь с ID {telegram_id} не найден')
                 return False
             
-            # Проверяем, является ли пользователь системным админом
             if telegram_id in config.ADMIN_IDS:
                 print(f'Пользователь {telegram_id} является системным админом, роль не может быть изменена')
-                return False  # или можно просто игнорировать изменение
+                user.role = 'admin'
+                session.commit()
+                session.refresh(user)
+                return False
             
             valid_roles = ['user', 'member', 'leading', 'checker', 'admin']
             if new_role not in valid_roles:
@@ -497,7 +512,7 @@ class Database:
             session.close()
 
     async def get_users_by_role(self, role):
-        session = await self._get_session()
+        session = self._get_session()
         try:
             users = session.query(User).filter(User.role == role).all()
             
@@ -520,11 +535,6 @@ class Database:
             return []
         finally:
             session.close()
-
-
-
-        
-
 
     async def get_ticket_by_code(self, code):
         session = self.Session()
