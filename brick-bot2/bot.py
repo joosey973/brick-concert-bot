@@ -1257,6 +1257,17 @@ async def raffle_section(message: types.Message):
     await message.answer('🌟 Вы можете назначить ведущего или провести розыгрыш!', reply_markup=keyboard)
 
 
+@dp.message(F.text == '👹 Рассылка нашего тгк')
+async def newsletter(message: types.Message):
+    from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
+    users = await database.get_all_users()
+    txt = text.newsletter
+    buttons = [[InlineKeyboardButton(text='🎸 Подписаться', url='https://t.me/astralvl')]]
+    keyboard = InlineKeyboardMarkup(inline_keyboard=buttons)
+    for user in users:
+        await bot.send_message(chat_id=user.telegram_id, text=txt, reply_markup=keyboard)
+
+
 @dp.message(F.text == '🔙 Назад в меню')
 async def back_from_raffle(message: types.Message):
     if message.from_user.id not in config.ADMIN_IDS:

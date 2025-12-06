@@ -51,6 +51,7 @@ async def get_admin_keyboard():
 async def raffle_keyboard():
     buttons = [
         [KeyboardButton(text='💰 Розыгрыш среди групп'), KeyboardButton(text='🎲 Розыгрыш среди зала')],
+        [KeyboardButton(text='👹 Рассылка нашего тгк')],
         [KeyboardButton(text='🔄 Отправить голосвание (по группам)')],
         [KeyboardButton(text='🔙 Назад в меню')],
     ]
